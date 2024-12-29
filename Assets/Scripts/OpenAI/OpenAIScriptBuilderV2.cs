@@ -1,4 +1,3 @@
-using OpenAI_API.Completions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
