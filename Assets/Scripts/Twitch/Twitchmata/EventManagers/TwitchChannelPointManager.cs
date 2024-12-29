@@ -87,7 +87,7 @@ public class TwitchChannelPointManager : ChannelPointManager
         VoiceChange.AutoFulfills = false;
         RegisterReward(VoiceChange, VoiceChangeRedeemMethod);
 
-        _testUser = new Twitchmata.Models.User("12345", "TEST", "TESTNAME");
+        //_testUser = new Twitchmata.Models.User("12345", "TEST", "TESTNAME");
 
         DelayedStart();
     }
@@ -213,7 +213,7 @@ public class TwitchChannelPointManager : ChannelPointManager
     {
         ChannelPointRedemption redemption = new ChannelPointRedemption();
         redemption.User = _testUser;
-        redemption.RedemptionID = "0001";
+        //redemption.RedemptionID = "0001";
         redemption.Reward = LowGravityReward;
 
         Debug.Log("TestLowGravity");
@@ -225,7 +225,7 @@ public class TwitchChannelPointManager : ChannelPointManager
     {
         ChannelPointRedemption redemption = new ChannelPointRedemption();
         redemption.User = _testUser;
-        redemption.RedemptionID = "0002";
+        //redemption.RedemptionID = "0002";
         redemption.Reward = ConveyerBeltsMaxSpeed;
 
         Debug.Log("TestMaxConveyerbeltSpeed");
@@ -237,7 +237,7 @@ public class TwitchChannelPointManager : ChannelPointManager
     {
         ChannelPointRedemption redemption = new ChannelPointRedemption();
         redemption.User = _testUser;
-        redemption.RedemptionID = "0003";
+        //redemption.RedemptionID = "0003";
         redemption.Reward = SmallBoxes;
 
         Debug.Log("TestSmallBoxes");
@@ -249,7 +249,7 @@ public class TwitchChannelPointManager : ChannelPointManager
     {
         ChannelPointRedemption redemption = new ChannelPointRedemption();
         redemption.User = _testUser;
-        redemption.RedemptionID = "0004";
+        //redemption.RedemptionID = "0004";
         redemption.Reward = PutNPCOnConveyerBelt;
 
         Debug.Log("TestPutNPCOnConveyerBelt");
@@ -261,7 +261,7 @@ public class TwitchChannelPointManager : ChannelPointManager
     {
         ChannelPointRedemption redemption = new ChannelPointRedemption();
         redemption.User = _testUser;
-        redemption.RedemptionID = "0005";
+        //redemption.RedemptionID = "0005";
         redemption.Reward = VoiceChange;
 
         Debug.Log("TestVoiceChangeRedeem");

@@ -21,14 +21,14 @@ namespace Twitchmata
 
         // Twitch max message length is 500
         private int maxMessageLength = 500;
-        public void RegisterChatCommand(string command, Permissions permissions, ChatCommandCallback callback)
-        {
-            RegisteredCommands[command] = new RegisteredChatCommand()
-            {
-                Permissions = permissions,
-                Callback = callback,
-            };
-        }
+        //public void RegisterChatCommand(string command, Permissions permissions, ChatCommandMessageCallback callback)
+        //{
+        //    RegisteredCommands[command] = new RegisteredChatCommand()
+        //    {
+        //        Permissions = permissions,
+        //        Callback = callback,
+        //    };
+        //}
 
         protected void SendReplyMessage(Twitchmata.Models.User user, string text)
         {
@@ -49,46 +49,46 @@ namespace Twitchmata
             }
         }
 
-        private Dictionary<string, RegisteredChatCommand> RegisteredCommands = new Dictionary<string, RegisteredChatCommand>();
+        //private Dictionary<string, RegisteredChatCommand> RegisteredCommands = new Dictionary<string, RegisteredChatCommand>();
 
-        override internal void InitializeClient(Client client)
-        {
-            Logger.LogInfo("Setting up Chat Command Manager");
-            client.OnChatCommandReceived -= Client_OnChatCommandReceived;
-            client.OnChatCommandReceived += Client_OnChatCommandReceived;
-        }
+        //override public void InitializeClient(Client client)
+        //{
+        //    Debug.Log("Setting up Chat Command Manager");
+        //    client.OnChatCommandReceived -= Client_OnChatCommandReceived;
+        //    client.OnChatCommandReceived += Client_OnChatCommandReceived;
+        //}
 
         private void Client_OnChatCommandReceived(object sender, OnChatCommandReceivedArgs args)
         {
-            var command = args.Command;
-            if (RegisteredCommands.ContainsKey(command.CommandText) == false)
-            {
-                return;
-            }
+            //var command = args.Command;
+            //if (RegisteredCommands.ContainsKey(command.CommandText) == false)
+            //{
+            //    return;
+            //}
 
-            var user = UserManager.UserForChatMessage(command.ChatMessage);
+            //var user = UserManager.UserForChatMessage(command.ChatMessage);
 
-            var registeredCommand = RegisteredCommands[command.CommandText];
+            //var registeredCommand = RegisteredCommands[command.CommandText];
 
-            if (user.IsPermitted(registeredCommand.Permissions) == false)
-            {
-                SendChatMessage("You don't have permission to use this command");
-                return;
-            }
+            //if (user.IsPermitted(registeredCommand.Permissions) == false)
+            //{
+            //    SendChatMessage("You don't have permission to use this command");
+            //    return;
+            //}
 
-            Debug.Log("TWITCH: User:" + user.DisplayName + " called command:" + command.CommandText + " with parameters:" + command.ArgumentsAsString);
+            //Debug.Log("TWITCH: User:" + user.DisplayName + " called command:" + command.CommandText + " with parameters:" + command.ArgumentsAsString);
 
-            ModerateInputThenTryCommand(command, registeredCommand, user);
+            //ModerateInputThenTryCommand(command, registeredCommand, user);
         }
 
-        private async void ModerateInputThenTryCommand(ChatCommand command, RegisteredChatCommand registeredCommand, Models.User user)
-        {
-            if (await TryModerateCommand(command.CommandText, command.ArgumentsAsString, user))
-            {
-                List<string> argsAsList = new List<string>(command.ArgumentsAsString.Split(' '));
-                registeredCommand.Callback.Invoke(argsAsList, user);
-            }
-        }
+        //private async void ModerateInputThenTryCommand(ChatCommand command, RegisteredChatCommand registeredCommand, Models.User user)
+        //{
+        //    if (await TryModerateCommand(command.CommandText, command.ArgumentsAsString, user))
+        //    {
+        //        List<string> argsAsList = new List<string>(command.ArgumentsAsString.Split(' '));
+        //        //registeredCommand.Callback.Invoke(argsAsList, user);
+        //    }
+        //}
 
         public async Task<bool> TryModerateCommand(string commandName, string commandArgs, Models.User user)
         {

@@ -25,44 +25,44 @@ public class TwitchChatCommandManager : MegCommandManager
     public override void InitializeFeatureManager()
     {
         // Mod commands
-        RegisterChatCommand("skip", Permissions.Mods, SkipCommand);
+        //RegisterChatCommand("skip", Permissions.Mods, SkipCommand);
 
-        RegisterChatCommand("open", Permissions.Mods, OpenQueueCommand);
+        //RegisterChatCommand("open", Permissions.Mods, OpenQueueCommand);
 
-        RegisterChatCommand("close", Permissions.Mods, CloseQueueCommand);
+        //RegisterChatCommand("close", Permissions.Mods, CloseQueueCommand);
 
-        RegisterChatCommand("clear", Permissions.Mods, ClearQueueCommand);
+        //RegisterChatCommand("clear", Permissions.Mods, ClearQueueCommand);
 
-        RegisterChatCommand("strict", Permissions.Mods, StrictCommand);
+        //RegisterChatCommand("strict", Permissions.Mods, StrictCommand);
 
-        RegisterChatCommand("queuesize", Permissions.Mods, QueueSizeCommand);
+        //RegisterChatCommand("queuesize", Permissions.Mods, QueueSizeCommand);
 
-        RegisterChatCommand("peruser", Permissions.Mods, RequestsPerUserCommand);
+        //RegisterChatCommand("peruser", Permissions.Mods, RequestsPerUserCommand);
 
-        RegisterChatCommand("timeout", Permissions.Mods, SetTimeoutCommand);
+        //RegisterChatCommand("timeout", Permissions.Mods, SetTimeoutCommand);
 
-        RegisterChatCommand("steps", Permissions.Mods, StepsCommand);
+        //RegisterChatCommand("steps", Permissions.Mods, StepsCommand);
 
-        RegisterChatCommand("voice", Permissions.Mods, VoiceChangeCommand);
+        //RegisterChatCommand("voice", Permissions.Mods, VoiceChangeCommand);
 
-        RegisterChatCommand("restart", Permissions.Mods, RestartCommand);
+        //RegisterChatCommand("restart", Permissions.Mods, RestartCommand);
 
-        // Everyone commands
-        RegisterChatCommand("queue", Permissions.Everyone, QueueCommand);
-        RegisterChatCommand("q", Permissions.Everyone, QueueCommand);
+        //// Everyone commands
+        //RegisterChatCommand("queue", Permissions.Everyone, QueueCommand);
+        //RegisterChatCommand("q", Permissions.Everyone, QueueCommand);
 
-        RegisterChatCommand("request", Permissions.Everyone, ProductRequestCommand);
-        RegisterChatCommand("req", Permissions.Everyone, ProductRequestCommand);
-        RegisterChatCommand("r", Permissions.Everyone, ProductRequestCommand);
+        //RegisterChatCommand("request", Permissions.Everyone, ProductRequestCommand);
+        //RegisterChatCommand("req", Permissions.Everyone, ProductRequestCommand);
+        //RegisterChatCommand("r", Permissions.Everyone, ProductRequestCommand);
 
-        RegisterChatCommand("info", Permissions.Everyone, InfoCommand);
-        RegisterChatCommand("i", Permissions.Everyone, InfoCommand);
+        //RegisterChatCommand("info", Permissions.Everyone, InfoCommand);
+        //RegisterChatCommand("i", Permissions.Everyone, InfoCommand);
 
-        RegisterChatCommand("help", Permissions.Everyone, HelpCommand);
-        RegisterChatCommand("h", Permissions.Everyone, HelpCommand);
+        //RegisterChatCommand("help", Permissions.Everyone, HelpCommand);
+        //RegisterChatCommand("h", Permissions.Everyone, HelpCommand);
 
-        RegisterChatCommand("remove", Permissions.Everyone, RemoveItemCommand);
-        RegisterChatCommand("x", Permissions.Everyone, RemoveItemCommand);
+        //RegisterChatCommand("remove", Permissions.Everyone, RemoveItemCommand);
+        //RegisterChatCommand("x", Permissions.Everyone, RemoveItemCommand);
     }
 
     public void TestMessages()
@@ -73,88 +73,88 @@ public class TwitchChatCommandManager : MegCommandManager
 
     private async Task TestDebug()
     {
-        Twitchmata.Models.User user = new Twitchmata.Models.User("12345", "TEST", "TESTNAME");
-        List<string> emptyArgs = new List<string>() { };
+        //Twitchmata.Models.User user = new Twitchmata.Models.User("12345", "TEST", "TESTNAME");
+        //List<string> emptyArgs = new List<string>() { };
 
-        OpenQueueCommand(emptyArgs, user);
-        await Task.Delay(100);
-        ProductRequestCommand(new List<string> { "test1" }, user);
-        await Task.Delay(100);
-        ProductRequestCommand(new List<string> { "test2" }, user);
-        await Task.Delay(100);
-        ProductRequestCommand(new List<string> { "test3" }, user);
-        await Task.Delay(100);
-        QueueCommand(emptyArgs, user);
-        await Task.Delay(100);
-        RemoveItemCommand(new List<string> { "3" }, user);
-        await Task.Delay(100);
-        QueueCommand(emptyArgs, user);
-        await Task.Delay(100);
-        RemoveItemCommand(new List<string> { "1" }, user);
-        await Task.Delay(100);
-        QueueCommand(emptyArgs, user);
-        await Task.Delay(100);
-        RemoveItemCommand(new List<string> { "1" }, user);
-        await Task.Delay(100);
-        QueueCommand(emptyArgs, user);
-        await Task.Delay(100);
-        RemoveItemCommand(new List<string> { "1" }, user);
-        await Task.Delay(100);
-        QueueCommand(emptyArgs, user);
-        await Task.Delay(100);
+        //OpenQueueCommand(emptyArgs, user);
+        //await Task.Delay(100);
+        //ProductRequestCommand(new List<string> { "test1" }, user);
+        //await Task.Delay(100);
+        //ProductRequestCommand(new List<string> { "test2" }, user);
+        //await Task.Delay(100);
+        //ProductRequestCommand(new List<string> { "test3" }, user);
+        //await Task.Delay(100);
+        //QueueCommand(emptyArgs, user);
+        //await Task.Delay(100);
+        //RemoveItemCommand(new List<string> { "3" }, user);
+        //await Task.Delay(100);
+        //QueueCommand(emptyArgs, user);
+        //await Task.Delay(100);
+        //RemoveItemCommand(new List<string> { "1" }, user);
+        //await Task.Delay(100);
+        //QueueCommand(emptyArgs, user);
+        //await Task.Delay(100);
+        //RemoveItemCommand(new List<string> { "1" }, user);
+        //await Task.Delay(100);
+        //QueueCommand(emptyArgs, user);
+        //await Task.Delay(100);
+        //RemoveItemCommand(new List<string> { "1" }, user);
+        //await Task.Delay(100);
+        //QueueCommand(emptyArgs, user);
+        //await Task.Delay(100);
 
-        ProductRequestCommand(new List<string> { "test1" }, user);
-        await Task.Delay(100);
-        ProductRequestCommand(new List<string> { "test2" }, user);
-        await Task.Delay(100);
-        ProductRequestCommand(new List<string> { "test3" }, user);
-        await Task.Delay(100);
-        ClearQueueCommand(emptyArgs, user);
-        await Task.Delay(100);
+        //ProductRequestCommand(new List<string> { "test1" }, user);
+        //await Task.Delay(100);
+        //ProductRequestCommand(new List<string> { "test2" }, user);
+        //await Task.Delay(100);
+        //ProductRequestCommand(new List<string> { "test3" }, user);
+        //await Task.Delay(100);
+        //ClearQueueCommand(emptyArgs, user);
+        //await Task.Delay(100);
 
-        OpenQueueCommand(emptyArgs, user);
-        await Task.Delay(100);
-        ProductRequestCommand(new List<string> { "Testing bass" }, user);
-        await Task.Delay(100);
-        StrictCommand(emptyArgs, user);
-        await Task.Delay(100);
-        ProductRequestCommand(new List<string> { "Testing bass after strict" }, user);
-        await Task.Delay(100);
-        ProductRequestCommand(new List<string> { "What the fuckingfuck is this" }, user);
-        await Task.Delay(100);
-        StrictCommand(new List<string> { "off" }, user);
-        await Task.Delay(100);
-        ProductRequestCommand(new List<string> { "After strict: What the fuckingfuck is this?" }, user);
-        await Task.Delay(100);
+        //OpenQueueCommand(emptyArgs, user);
+        //await Task.Delay(100);
+        //ProductRequestCommand(new List<string> { "Testing bass" }, user);
+        //await Task.Delay(100);
+        //StrictCommand(emptyArgs, user);
+        //await Task.Delay(100);
+        //ProductRequestCommand(new List<string> { "Testing bass after strict" }, user);
+        //await Task.Delay(100);
+        //ProductRequestCommand(new List<string> { "What the fuckingfuck is this" }, user);
+        //await Task.Delay(100);
+        //StrictCommand(new List<string> { "off" }, user);
+        //await Task.Delay(100);
+        //ProductRequestCommand(new List<string> { "After strict: What the fuckingfuck is this?" }, user);
+        //await Task.Delay(100);
 
-        QueueSizeCommand(new List<string> { "3" }, user);
-        await Task.Delay(100);
-        QueueSizeCommand(emptyArgs, user);
-        await Task.Delay(100);
-        QueueSizeCommand(new List<string> { "alsdkfj" }, user);
-        await Task.Delay(100);
-        QueueSizeCommand(new List<string> { "999" }, user);
-        await Task.Delay(100);
-        QueueSizeCommand(new List<string> { "-5" }, user);
-        await Task.Delay(100);
+        //QueueSizeCommand(new List<string> { "3" }, user);
+        //await Task.Delay(100);
+        //QueueSizeCommand(emptyArgs, user);
+        //await Task.Delay(100);
+        //QueueSizeCommand(new List<string> { "alsdkfj" }, user);
+        //await Task.Delay(100);
+        //QueueSizeCommand(new List<string> { "999" }, user);
+        //await Task.Delay(100);
+        //QueueSizeCommand(new List<string> { "-5" }, user);
+        //await Task.Delay(100);
 
-        RequestsPerUserCommand(new List<string> { "3" }, user);
-        await Task.Delay(100);
-        RequestsPerUserCommand(emptyArgs, user);
-        await Task.Delay(100);
-        RequestsPerUserCommand(new List<string> { "alsdkfj" }, user);
-        await Task.Delay(100);
-        RequestsPerUserCommand(new List<string> { "999" }, user);
-        await Task.Delay(100);
-        RequestsPerUserCommand(new List<string> { "-5" }, user);
-        await Task.Delay(100);
+        //RequestsPerUserCommand(new List<string> { "3" }, user);
+        //await Task.Delay(100);
+        //RequestsPerUserCommand(emptyArgs, user);
+        //await Task.Delay(100);
+        //RequestsPerUserCommand(new List<string> { "alsdkfj" }, user);
+        //await Task.Delay(100);
+        //RequestsPerUserCommand(new List<string> { "999" }, user);
+        //await Task.Delay(100);
+        //RequestsPerUserCommand(new List<string> { "-5" }, user);
+        //await Task.Delay(100);
 
-        InfoCommand(emptyArgs, user);
-        await Task.Delay(100);
+        //InfoCommand(emptyArgs, user);
+        //await Task.Delay(100);
 
 
-        // Disable debug mode just in case...
-        _debug = false;
+        //// Disable debug mode just in case...
+        //_debug = false;
     }
 
     private void QueueSizeCommand(List<string> arguments, Twitchmata.Models.User user)
