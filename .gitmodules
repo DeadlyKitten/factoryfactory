@@ -1,3 +1,6 @@
 [submodule "Twitchmata"]
 	path = Assets/Twitchmata
 	url = https://github.com/pilky/twitchmata.git
+[submodule "Assets/Twitchmata"]
+	path = Assets/Twitchmata
+	url = https://github.com/pilky/twitchmata.git
