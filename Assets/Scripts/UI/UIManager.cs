@@ -165,9 +165,9 @@ public class UIManager : ExitableMonobehaviour
 
     private async void SubtitleNarrationAsync(NarrationPart narrationPart)
     {
-        string[] subtitleParts = Regex.Split(narrationPart.text, @"\s+");
+        string[] subtitleParts = Regex.Split(narrationPart.Text, @"\s+");
 
-        int timePerSubtitleMS = (int)((narrationPart.audioClipUberduck.length / subtitleParts.Length) * 1000);
+        int timePerSubtitleMS = (int)((narrationPart.Clip.length / subtitleParts.Length) * 1000);
 
         SetSubtitles("");
 

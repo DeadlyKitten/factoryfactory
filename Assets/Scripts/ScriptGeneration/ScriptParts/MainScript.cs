@@ -33,6 +33,8 @@ public class MainScript : ExitableMonobehaviour
 
     public async Task GenerateNarrationPartsAsync()
     {
+        return;
+
         int loadingBarIncrementSection = 33 / scriptSections.Count;
         foreach (ScriptSection scriptSection in scriptSections)
         {
@@ -71,7 +73,7 @@ public class MainScript : ExitableMonobehaviour
 
                 if (clip != null)
                 {
-                    narrationPart.setUberduckAudioclip(clip);
+                    narrationPart.SetAudioclip(clip);
                     scriptSection.narrationParts.Add(narrationPart);
 
                     ++numNarrationLines;
@@ -102,9 +104,9 @@ public class MainScript : ExitableMonobehaviour
         {
             foreach (NarrationPart narrationPart in scriptSection.narrationParts)
             {
-                if (narrationPart.audioClipUberduck != null)
+                if (narrationPart.Clip != null)
                 {
-                    Destroy(narrationPart.audioClipUberduck);
+                    Destroy(narrationPart.Clip);
                 }
             }
         }

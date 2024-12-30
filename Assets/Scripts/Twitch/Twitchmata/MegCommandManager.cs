@@ -124,7 +124,7 @@ namespace Twitchmata
         {
             input = Regex.Replace(input, @"[^a-zA-Z0-9\s-,'.%$]", string.Empty);
 
-            if (await OpenAICompleter.Instance.DoesTextPassModeration(input))
+            if (await ScriptGenerator.Instance.DoesTextPassModeration(input))
             {
                 // Extra moderation step for user input, if not a mod
                 if (strictModeration && !user.IsModerator && !user.IsBroadcaster)

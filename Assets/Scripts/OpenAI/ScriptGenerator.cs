@@ -4,10 +4,11 @@ using UnityEngine;
 using System.Threading.Tasks;
 using System;
 using System.Text.RegularExpressions;
+using Ollama;
 
-public class OpenAICompleter : MonoBehaviour
+public class ScriptGenerator : MonoBehaviour
 {
-    public static OpenAICompleter Instance;
+    public static ScriptGenerator Instance;
 
     [SerializeField]
     private int _completionAttemptsMax = 3;
@@ -119,7 +120,8 @@ public class OpenAICompleter : MonoBehaviour
         //            return completionResult.Completions[0].Text.Trim();
         //        }
 
-        return null;
+
+        return await OllamaClient.Generate("llama3.2", promptText);
     }
 
     public async Task<bool> DoesTextPassModeration(string text)

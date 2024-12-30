@@ -8,7 +8,7 @@ using UnityEngine.UIElements;
 public class MainScriptHandler : ExitableMonobehaviour
 {
     public static MainScriptHandler Instance;
-    public OpenAIScriptBuilderV2 scriptBuilder;
+    public ScriptBuilder scriptBuilder;
 
     public float timeBeforeLinesSec = 1;
     public float timeAfterLinesSec = 1;
@@ -194,9 +194,9 @@ public class MainScriptHandler : ExitableMonobehaviour
 
     public async Task<bool> PlayNarrationPartAudioAsync(NarrationPart narrationPart)
     {
-        Debug.LogWarning($"Playing line: {narrationPart.text}");
+        Debug.LogWarning($"Playing line: {narrationPart.Text}");
         audioSource.Stop();
-        audioSource.clip = narrationPart.audioClipUberduck;
+        audioSource.clip = narrationPart.Clip;
 
         await Task.Delay((int)(timeBeforeLinesSec * 1000));
 

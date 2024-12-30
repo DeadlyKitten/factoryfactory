@@ -9,7 +9,7 @@ public class StateMachine : MonoBehaviour
     public static StateMachine Instance;
     public static Action NextStateAction;
     public IState currentState { get; private set; }
-    public OpenAIScriptBuilderV2 scriptBuilder { get; private set; }
+    public ScriptBuilder scriptBuilder { get; private set; }
 
     private bool _minimumTimeInStateElapsed = false;
     private bool _waitingForAsync = false;
@@ -39,7 +39,7 @@ public class StateMachine : MonoBehaviour
 
         NextStateAction += NextState;
 
-        scriptBuilder = GetComponent<OpenAIScriptBuilderV2>();
+        scriptBuilder = GetComponent<ScriptBuilder>();
 
         _ = ChangeState(StateIDs.STARTUP);
     }
