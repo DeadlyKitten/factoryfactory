@@ -1,4 +1,3 @@
-using OpenAI_API.Completions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,7 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class OpenAIScriptBuilderV2 : ExitableMonobehaviour
+public class ScriptBuilder : ExitableMonobehaviour
 {
     public List<PromptSO> prompts;
 
@@ -77,7 +76,7 @@ public class OpenAIScriptBuilderV2 : ExitableMonobehaviour
 
         try
         {
-            result = await OpenAICompleter.Instance.CreateScriptCompletionAsync(prompt, ms.productNameScriptSection);
+            result = await ScriptGenerator.Instance.CreateScriptCompletionAsync(prompt, ms.productNameScriptSection);
         } catch
         {
             Debug.LogError("Failed to generate valid product name from API! Using a backup product name...");
@@ -140,7 +139,7 @@ public class OpenAIScriptBuilderV2 : ExitableMonobehaviour
 
         try
         {
-            result = await OpenAICompleter.Instance.CreateScriptCompletionAsync(customPrompt, section);
+            result = await ScriptGenerator.Instance.CreateScriptCompletionAsync(customPrompt, section);
         }
         catch (Exception e)
         {

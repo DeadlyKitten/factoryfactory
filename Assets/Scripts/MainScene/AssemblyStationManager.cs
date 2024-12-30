@@ -321,7 +321,7 @@ public class AssemblyStationManager : ExitableMonobehaviour
         List<string> foundTags = new List<string>();
         foreach (string tag in _stationsTagMap.Keys)
         {
-            if (Regex.IsMatch(part.text, $"\b{tag}(ing|er|ed)?\b"))
+            if (Regex.IsMatch(part.Text, $"\b{tag}(ing|er|ed)?\b"))
             {
                 foundTags.Add(tag);
             }
@@ -341,13 +341,13 @@ public class AssemblyStationManager : ExitableMonobehaviour
         string promptText = StringUtils.ReplaceTextInString("tags", GetTagMapTagsString(), _assemblyClassificationPrompt.text);
 
         // Add the narration part at the end
-        promptText = promptText + part.text;
+        promptText = promptText + part.Text;
 
         string result = "";
 
         try
         {
-            result = await OpenAICompleter.Instance.CreateCompletionAsync(promptText, _assemblyClassificationPrompt);
+            result = await ScriptGenerator.Instance.CreateCompletionAsync(promptText, _assemblyClassificationPrompt);
         }
         catch
         {

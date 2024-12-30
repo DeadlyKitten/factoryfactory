@@ -18,7 +18,7 @@ MonoBehaviour:
     an outro for an episode.
 
 
-    Here are 4 examples:
+    Here are 3 examples:
 
     laptops:
 
@@ -41,9 +41,8 @@ MonoBehaviour:
     task of brushing their teeth."
 
 
-    {product name}:
-
-    "'
+    Please write an outro for today''s product:
+    {product name}. Respond with only the script for the outro, with no stage direction.'
   textToPrepend: 
   modelName: text-babbage-001
   temperature: 1

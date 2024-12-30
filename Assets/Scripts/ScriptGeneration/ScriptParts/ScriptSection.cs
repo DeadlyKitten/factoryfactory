@@ -12,6 +12,7 @@ public class ScriptSection
     public ScriptSection(PromptSO promptSO)
     {
         this.promptSO = promptSO;
+        this.text = promptSO.text;
 
         // Narration parts are added after the script part is generated
         narrationParts = new List<NarrationPart>();

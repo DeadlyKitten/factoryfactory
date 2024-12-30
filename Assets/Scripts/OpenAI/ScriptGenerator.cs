@@ -1,18 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using OpenAI_API;
-using OpenAI_API.Completions;
 using System.Threading.Tasks;
 using System;
-using OpenAI_API.Moderation;
 using System.Text.RegularExpressions;
-using OpenAI_API.Chat;
+using Ollama;
 
-public class OpenAICompleter : MonoBehaviour
+public class ScriptGenerator : MonoBehaviour
 {
-    private OpenAIAPI api;
-    public static OpenAICompleter Instance;
+    public static ScriptGenerator Instance;
 
     [SerializeField]
     private int _completionAttemptsMax = 3;
@@ -25,8 +21,6 @@ public class OpenAICompleter : MonoBehaviour
         }
 
         Instance = this;
-
-        if (api == null) api = new OpenAIAPI(Auth.OpenAIAPIKey);
     }
 
     public async Task<string> CreateScriptCompletionAsync(ScriptSection scriptSection)
@@ -95,53 +89,56 @@ public class OpenAICompleter : MonoBehaviour
 
     private async Task<string> GetResultFromRequest(string promptText, PromptSO p)
     {
-        if (p.modelName.Equals(OpenAI_API.Models.Model.ChatGPTTurbo)
-            || p.modelName.Equals(OpenAI_API.Models.Model.ChatGPTTurbo0301))
-        {
-            ChatRequest request = new ChatRequest();
-            List<ChatMessage> messages = new List<ChatMessage>();
-            messages.Add(new ChatMessage(ChatMessageRole.User, promptText));
-            request.Messages = messages;
-            request.Model = p.modelName;
-            request.Temperature = p.temperature;
+        //        if (p.modelName.Equals(OpenAI_API.Models.Model.ChatGPTTurbo)
+        //            || p.modelName.Equals(OpenAI_API.Models.Model.ChatGPTTurbo0301))
+        //        {
+        //            ChatRequest request = new ChatRequest();
+        //            List<ChatMessage> messages = new List<ChatMessage>();
+        //            messages.Add(new ChatMessage(ChatMessageRole.User, promptText));
+        //            request.Messages = messages;
+        //            request.Model = p.modelName;
+        //            request.Temperature = p.temperature;
 
-            // Use fewer tokens if running in the Unity editor
-#if UNITY_EDITOR
-            request.MaxTokens = p.maxLength > 100 ? p.maxLength / 100 : p.maxLength;
-#else
-            request.MaxTokens = p.maxLength;
-#endif
+        //            // Use fewer tokens if running in the Unity editor
+        //#if UNITY_EDITOR
+        //            request.MaxTokens = p.maxLength > 100 ? p.maxLength / 100 : p.maxLength;
+        //#else
+        //            request.MaxTokens = p.maxLength;
+        //#endif
 
-            ChatResult chatResult = await api.Chat.CreateChatCompletionAsync(request);
-            return chatResult.Choices[0].Message.Content.Trim();
-        } else
-        {
-            CompletionRequest request = new CompletionRequest();
-            request.Prompt = promptText;
-            request.Model = p.modelName;
-            request.Temperature = p.temperature;
-            request.MaxTokens = p.maxLength;
+        //            ChatResult chatResult = await api.Chat.CreateChatCompletionAsync(request);
+        //            return chatResult.Choices[0].Message.Content.Trim();
+        //        } else
+        //        {
+        //            CompletionRequest request = new CompletionRequest();
+        //            request.Prompt = promptText;
+        //            request.Model = p.modelName;
+        //            request.Temperature = p.temperature;
+        //            request.MaxTokens = p.maxLength;
 
-            CompletionResult completionResult = await api.Completions.CreateCompletionAsync(request);
-            return completionResult.Completions[0].Text.Trim();
-        }
+        //            CompletionResult completionResult = await api.Completions.CreateCompletionAsync(request);
+        //            return completionResult.Completions[0].Text.Trim();
+        //        }
+
+
+        return await OllamaClient.Generate("llama3.2", promptText);
     }
 
     public async Task<bool> DoesTextPassModeration(string text)
     {
-        // Check text against the banned words list
-        StringUtils.BannedPhraseCheckThrowsError(text);
+        //// Check text against the banned words list
+        //StringUtils.BannedPhraseCheckThrowsError(text);
 
-        ModerationRequest moderationRequest = new ModerationRequest(text, OpenAI_API.Models.Model.TextModerationLatest);
+        //ModerationRequest moderationRequest = new ModerationRequest(text, OpenAI_API.Models.Model.TextModerationLatest);
 
-        ModerationResult moderationResult = await api.Moderation.CallModerationAsync(moderationRequest);
+        //ModerationResult moderationResult = await api.Moderation.CallModerationAsync(moderationRequest);
 
-        if (moderationResult.Results[0].Flagged)
-        {
-            throw new ModerationAPIFlaggedException(moderationResult.Results[0].ToString());
-        }
+        //if (moderationResult.Results[0].Flagged)
+        //{
+        //    throw new ModerationAPIFlaggedException(moderationResult.Results[0].ToString());
+        //}
 
-        // Didn't fail any of the checks, so just return true
+        //// Didn't fail any of the checks, so just return true
         return true;
     }
 }

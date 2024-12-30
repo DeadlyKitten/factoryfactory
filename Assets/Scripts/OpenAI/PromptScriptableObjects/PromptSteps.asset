@@ -12,18 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc3582752d2c904468d2c1b4b9a3a904, type: 3}
   m_Name: PromptSteps
   m_EditorClassIdentifier: 
-  text: 'You are a writer for a TV show about how things are made. These can be abstract
+  text: You are a writer for a TV show about how things are made. These can be abstract
     concepts, or tangible products. These products are made on an assembly line using
-    many different machines. The show is called "Factory Factory". In this episode
-    you are describing how something is made in a {num steps} step process. Make
-    sure it is wacky and interesting.
-
-
-    Use this prompt: {product name}
-
-
-    Step
-    1. It all starts with'
+    many different wacky and weird machines. The show is called "Factory Factory".
+    In this episode, you are describing how something is made in a 5 step process.
+    Make sure it is wacky and interesting, with just a little bit of nonsense. You 
+    only need to write the script for the narrator to read off of, so don't include
+    any stage direction, step numbers, or titles for the individual steps. Make sure
+    the first step starts with the phrase "It all starts with..." but do not say
+    "dash". The product being made in this episode is "{product name}"
   textToPrepend: 'Step 1. It all starts with '
   modelName: gpt-3.5-turbo
   temperature: 1

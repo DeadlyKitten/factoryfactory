@@ -19,7 +19,7 @@ public class TestModeration : MonoBehaviour
     {
         try
         {
-            await OpenAICompleter.Instance.DoesTextPassModeration(test);
+            await ScriptGenerator.Instance.DoesTextPassModeration(test);
             Debug.Log($"MODERATION TEST: {test} passes moderation");
         } catch (ModerationAPIFlaggedException) {
             Debug.LogWarning($"MODERATION TEST: {test} failed API moderation");
