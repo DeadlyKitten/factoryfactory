@@ -6,16 +6,12 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
-using Uberduck.NET;
-using Uberduck.NET.Keys;
 using Newtonsoft.Json;
-using Uberduck.NET.Models;
 using System.Text.RegularExpressions;
 
-public class UberduckManager : MonoBehaviour
+public class TTSManager : MonoBehaviour
 {
-    private UberduckClient? _client;
-    public static UberduckManager Instance;
+    public static TTSManager Instance;
     public string voiceName = "";
 
     [SerializeField]
@@ -29,8 +25,6 @@ public class UberduckManager : MonoBehaviour
         }
 
         Instance = this;
-
-        if (_client == null) _client = new UberduckClient(new UberduckKeys(Auth.UberduckPubKey, Auth.UberduckPrivKey));
     }
 
     public async Task<AudioClip> GenerateAudioClip(string text)
@@ -42,51 +36,51 @@ public class UberduckManager : MonoBehaviour
 
         text = FixMispronouncedWords(text);
 
-        UberduckGeneratedResult voice = null;
+        //UberduckGeneratedResult voice = null;
         int tryCounter = 0;
 
-        do
-        {
-            try
-            {
-                // This is where the HttpRequestExceptions happen
-                voice = await _client.GenerateVoiceAsync(text, voiceName);
-            }
-            catch (Exception e)
-            {
-                Debug.LogWarning("Caught error from Uberduck API when generating voice:");
-                Debug.LogError(e);
-                tryCounter++;
-                await Task.Delay(1000);
-            }
-        } while (voice == null && tryCounter < _maxClipGenerationTries);
+        //do
+        //{
+        //    try
+        //    {
+        //        // This is where the HttpRequestExceptions happen
+        //        voice = await _client.GenerateVoiceAsync(text, voiceName);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Debug.LogWarning("Caught error from Uberduck API when generating voice:");
+        //        Debug.LogError(e);
+        //        tryCounter++;
+        //        await Task.Delay(1000);
+        //    }
+        //} while (voice == null && tryCounter < _maxClipGenerationTries);
 
-        if (voice == null)
-        {
-            Debug.LogError($"Failed to generate audio clip {_maxClipGenerationTries} times! Skipping.");
-            return null;
-        }
+        //if (voice == null)
+        //{
+        //    Debug.LogError($"Failed to generate audio clip {_maxClipGenerationTries} times! Skipping.");
+        //    return null;
+        //}
 
         string audioPath = null;
 
-        while (true)
-        {
-            try
-            {
-                var audioStream = await voice.GetDeserializedAudioData();
-                if (audioStream.Path != null)
-                {
-                    audioPath = audioStream.Path;
-                    break;
-                }
-                await Task.Delay(1000);
-            } catch (Exception e)
-            {
-                Debug.LogWarning("Caught exception trying to GetDeserializedAudioData from Uberduck API");
-                Debug.LogError(e);
-                break;
-            }
-        }
+        //while (true)
+        //{
+        //    try
+        //    {
+        //        var audioStream = await voice.GetDeserializedAudioData();
+        //        if (audioStream.Path != null)
+        //        {
+        //            audioPath = audioStream.Path;
+        //            break;
+        //        }
+        //        await Task.Delay(1000);
+        //    } catch (Exception e)
+        //    {
+        //        Debug.LogWarning("Caught exception trying to GetDeserializedAudioData from Uberduck API");
+        //        Debug.LogError(e);
+        //        break;
+        //    }
+        //}
 
         if (audioPath == null)
         {
@@ -121,17 +115,19 @@ public class UberduckManager : MonoBehaviour
     {
         // TODO: Use the actual voice endpoint to check if the voice exists.
         // Currently this tries to generate using the voice, and if it fails it assumes the voice doesn't exist.
-        try
-        {
-            // This is where the HttpRequestExceptions happen
-            await _client.GenerateVoiceAsync("Testing.", voiceID);
-            return true;
-        }
-        catch (Exception e)
-        {
-            Debug.LogError(e);
-            return false;
-        }
+        //try
+        //{
+        //    // This is where the HttpRequestExceptions happen
+        //    await _client.GenerateVoiceAsync("Testing.", voiceID);
+        //    return true;
+        //}
+        //catch (Exception e)
+        //{
+        //    Debug.LogError(e);
+        //    return false;
+        //}
+
+        return false;
     } 
 
     private IEnumerator GetAudioclipFromPath(string path, Action<AudioClip> callback)

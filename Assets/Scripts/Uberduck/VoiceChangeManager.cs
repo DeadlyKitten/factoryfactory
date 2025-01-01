@@ -34,11 +34,11 @@ public class VoiceChangeManager : MonoBehaviour
     {
         if (_nextVoiceID.Equals(string.Empty))
         {
-            UberduckManager.Instance.voiceName = DefaultVoice;
+            TTSManager.Instance.voiceName = DefaultVoice;
             return;
         }
 
-        UberduckManager.Instance.voiceName = _nextVoiceID;
+        TTSManager.Instance.voiceName = _nextVoiceID;
         _nextVoiceID = string.Empty;
     }
 
@@ -55,7 +55,7 @@ public class VoiceChangeManager : MonoBehaviour
 
     public async Task<bool> SetDefaultVoice(string voice)
     {
-        if (await UberduckManager.Instance.CheckIfVoiceExists(voice))
+        if (await TTSManager.Instance.CheckIfVoiceExists(voice))
         {
             _defaultVoice = voice;
             return true;
@@ -67,7 +67,7 @@ public class VoiceChangeManager : MonoBehaviour
 
     public async Task<bool> SetNextVoiceIdAsync(string nextVoiceId)
     {
-        if (await UberduckManager.Instance.CheckIfVoiceExists(nextVoiceId))
+        if (await TTSManager.Instance.CheckIfVoiceExists(nextVoiceId))
         {
             _nextVoiceID = nextVoiceId;
             return true;
