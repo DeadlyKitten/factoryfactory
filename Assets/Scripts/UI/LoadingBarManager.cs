@@ -34,6 +34,7 @@ public class LoadingBarManager : MonoBehaviour
 
     public void ShowLoadingBar()
     {
+        if (!Application.isPlaying) return;
         _groupBoxLoading.visible = true;
         StartCoroutine(FadeIn());
     }
@@ -56,7 +57,7 @@ public class LoadingBarManager : MonoBehaviour
             _lerpedPercent = percent;
         }
 
-        Debug.Log("Setting loading bar to:" + percent);
+        // Debug.Log("Setting loading bar to:" + percent);
         _percent = percent;
     }
 

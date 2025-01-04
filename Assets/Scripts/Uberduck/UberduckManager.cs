@@ -1,16 +1,20 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Security.AccessControl;
+using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
+<<<<<<< Updated upstream:Assets/Scripts/Uberduck/UberduckManager.cs
 using System.Collections;
 using Uberduck.NET;
 using Uberduck.NET.Keys;
 using Newtonsoft.Json;
 using Uberduck.NET.Models;
 using System.Text.RegularExpressions;
+=======
+using Xtts;
+>>>>>>> Stashed changes:Assets/Scripts/Uberduck/TTSManager.cs
 
 public class UberduckManager : MonoBehaviour
 {
@@ -21,6 +25,8 @@ public class UberduckManager : MonoBehaviour
     [SerializeField]
     private int _maxClipGenerationTries = 2;
 
+    CancellationTokenSource _cancellationTokenSource;
+
     void Awake()
     {
         if (Instance != null)
@@ -29,19 +35,28 @@ public class UberduckManager : MonoBehaviour
         }
 
         Instance = this;
+<<<<<<< Updated upstream:Assets/Scripts/Uberduck/UberduckManager.cs
 
         if (_client == null) _client = new UberduckClient(new UberduckKeys(Auth.UberduckPubKey, Auth.UberduckPrivKey));
+=======
+        _cancellationTokenSource = new CancellationTokenSource();
+>>>>>>> Stashed changes:Assets/Scripts/Uberduck/TTSManager.cs
     }
+
+    private void Start() => XttsClient.SetBaseURL("http://steven-factory.local:8020");
+
+    private void OnApplicationQuit() => _cancellationTokenSource?.Cancel();
 
     public async Task<AudioClip> GenerateAudioClip(string text)
     {
-        if (text == null)
+        if (text == null || !Application.isPlaying)
         {
             return null;
         }
 
         text = FixMispronouncedWords(text);
 
+<<<<<<< Updated upstream:Assets/Scripts/Uberduck/UberduckManager.cs
         UberduckGeneratedResult voice = null;
         int tryCounter = 0;
 
@@ -89,11 +104,37 @@ public class UberduckManager : MonoBehaviour
         }
 
         if (audioPath == null)
+=======
+        AudioClip clip = null;
+        int tryCounter = 0;
+
+        do
+>>>>>>> Stashed changes:Assets/Scripts/Uberduck/TTSManager.cs
         {
+            if (_cancellationTokenSource.Token.IsCancellationRequested)
+                return null;
+
+            try
+            {
+                // This is where the HttpRequestExceptions happen
+                clip = await XttsClient.GenerateTTS(text, _cancellationTokenSource.Token);
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning("Caught error from XTTS when generating voice:");
+                Debug.LogError(e);
+                tryCounter++;
+                await Task.Delay(1000, _cancellationTokenSource.Token);
+            }
+        } while (clip == null && tryCounter < _maxClipGenerationTries);
+
+        if (clip == null)
+        {
+            Debug.LogError($"Failed to generate audio clip {_maxClipGenerationTries} times! Skipping.");
             return null;
         }
 
-        return await GetAudioClip(audioPath);
+        return clip;
     }
 
     public async Task<AudioClip> GetAudioClip(string path)
@@ -134,31 +175,14 @@ public class UberduckManager : MonoBehaviour
         }
     } 
 
-    private IEnumerator GetAudioclipFromPath(string path, Action<AudioClip> callback)
-    {
-        using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(path, AudioType.WAV))
-        {
-            yield return www.SendWebRequest();
-            if (www.result != UnityWebRequest.Result.Success)
-            {
-                Debug.Log(www.error);
-                callback(null);
-            }
-            else
-            {
-                //Debug.Log("Got audio clip!");
-                callback(DownloadHandlerAudioClip.GetContent(www));
-            }
-        }
-    }
-
     private string FixMispronouncedWords(string text)
     {
         // Should translate all acronyms instead of doing this manually
-        text = Regex.Replace(text, "(3[Dd])", "three dee"); // "3D" is pronounced "trid" by uberduck
-        text = Regex.Replace(text, "([rR][gG][bB])", "are gee bee"); // uberduck says "grab"
-        text = Regex.Replace(text, "([vV][rR])", "vee are");
-        text = Regex.Replace(text, "([aA][iI])", "ayy eye");
+        text = Regex.Replace(text, @"(\b[3][Dd]\b)", "three dee"); // "3D" is pronounced "trid" by uberduck
+        text = Regex.Replace(text, @"(\b[rR][gG][bB]\b)", "are gee bee"); // uberduck says "grab"
+        text = Regex.Replace(text, @"(\b[vV][rR]\b)", "vee are");
+        text = Regex.Replace(text, @"(\b[aA][iI]\b)", "ayy eye");
+        text = Regex.Replace(text, @"(\b[bB][bB][qQ]\b)", "barbecue");
 
         return text;
     }

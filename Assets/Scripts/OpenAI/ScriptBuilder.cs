@@ -2,19 +2,24 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
+using Ollama;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 public class ScriptBuilder : ExitableMonobehaviour
 {
+    [SerializeField]
+    private string _productNameOverride = String.Empty;
+
     public List<PromptSO> prompts;
 
     public bool IsNextScriptUserRequest { get; private set; }
     public int minSteps = 5;
     public int maxSteps = 8;
 
-    public async Task<MainScript> GenerateNewScript()
+    public async Task<MainScript> GenerateNewScript(CancellationToken cancellationToken)
     {
         Debug.Log("Generating new script!");
         MainScript ms = gameObject.AddComponent<MainScript>();
@@ -22,26 +27,43 @@ public class ScriptBuilder : ExitableMonobehaviour
         ms.numStepsToGenerate = UnityEngine.Random.Range(minSteps, maxSteps + 1);
         ms.productNameScriptSection = new ScriptSection(prompts[0]);
 
-        if (RequestsManager.Instance.ProductRequestList.TryPeek(out TwitchRequest twitchRequest))
+        if (!string.IsNullOrEmpty(_productNameOverride))
+        {
+            ms.productNameScriptSection.SetResultText(_productNameOverride);
+        }
+        else if (RequestsManager.Instance.ProductRequestList.TryPeek(out TwitchRequest twitchRequest))
         {
             IsNextScriptUserRequest = true;
             ms.request = twitchRequest;
             ms.productNameScriptSection.SetResultText(twitchRequest.RequestText);
-        } else
+        } 
+        else
         {
             IsNextScriptUserRequest = false;
             Debug.LogWarning("ProductRequestList is empty! Generating new product name...");
             await GenerateProductName(ms);
         }
 
+        if (cancellationToken.IsCancellationRequested)
+            throw new AbandonScriptGenerationException("Cancellation requested!");
+
         await GenerateIntro(ms);
         LoadingBarManager.Instance.AppendLoadingBarPercent(11);
+
+        if (cancellationToken.IsCancellationRequested)
+            throw new AbandonScriptGenerationException("Cancellation requested!");
 
         await GenerateMain(ms);
         LoadingBarManager.Instance.AppendLoadingBarPercent(11);
 
+        if (cancellationToken.IsCancellationRequested)
+            throw new AbandonScriptGenerationException("Cancellation requested!");
+
         await GenerateOutro(ms);
         LoadingBarManager.Instance.AppendLoadingBarPercent(11);
+
+        if (cancellationToken.IsCancellationRequested)
+            throw new AbandonScriptGenerationException("Cancellation requested!");
 
         ms.AssembleScriptFromParts();
 
@@ -76,7 +98,7 @@ public class ScriptBuilder : ExitableMonobehaviour
 
         try
         {
-            result = await ScriptGenerator.Instance.CreateScriptCompletionAsync(prompt, ms.productNameScriptSection);
+            result = await ScriptGenerator.Instance.CreateScriptCompletionAsync(prompt, ms.productNameScriptSection, Ollama.KeepAlive.ThirtySeconds);
         } catch
         {
             Debug.LogError("Failed to generate valid product name from API! Using a backup product name...");
@@ -104,7 +126,7 @@ public class ScriptBuilder : ExitableMonobehaviour
 
     private async Task GenerateOutro(MainScript ms)
     {
-        await GenerateScriptSection(prompts[3], ms, $"Thanks for watching {StringUtils.projectName}");
+        await GenerateScriptSection(prompts[3], ms, $"Thanks for watching {StringUtils.projectName}", false);
     }
 
     private async Task GenerateMain(MainScript ms)
@@ -117,12 +139,12 @@ public class ScriptBuilder : ExitableMonobehaviour
         await GenerateScriptSection(prompt, ms, "Actually, I'm too tired to talk about this.");
     }
 
-    private async Task<ScriptSection> GenerateScriptSection(PromptSO prompt, MainScript ms, string fallbackText)
+    private async Task<ScriptSection> GenerateScriptSection(PromptSO prompt, MainScript ms, string fallbackText, bool keepAlive = true)
     {
-        return await GenerateScriptSection(prompt.text, prompt, ms, fallbackText);
+        return await GenerateScriptSection(prompt.text, prompt, ms, fallbackText, keepAlive);
     }
 
-    private async Task<ScriptSection> GenerateScriptSection(string customPromptText, PromptSO prompt, MainScript ms, string fallbackText)
+    private async Task<ScriptSection> GenerateScriptSection(string customPromptText, PromptSO prompt, MainScript ms, string fallbackText, bool keepAlive)
     {
         if (stopGeneratingImmediately)
         {
@@ -139,7 +161,7 @@ public class ScriptBuilder : ExitableMonobehaviour
 
         try
         {
-            result = await ScriptGenerator.Instance.CreateScriptCompletionAsync(customPrompt, section);
+            result = await ScriptGenerator.Instance.CreateScriptCompletionAsync(customPrompt, section, keepAlive ? Ollama.KeepAlive.ThirtySeconds : Ollama.KeepAlive.UnloadImmediately);
         }
         catch (Exception e)
         {

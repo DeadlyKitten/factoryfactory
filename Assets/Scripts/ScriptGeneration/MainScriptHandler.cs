@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -25,6 +26,8 @@ public class MainScriptHandler : ExitableMonobehaviour
     private Queue<MainScript> mainScripts;
     private MainScript _scriptBeingGenerated;
 
+    private CancellationTokenSource _cancellationTokenSource;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -34,6 +37,7 @@ public class MainScriptHandler : ExitableMonobehaviour
         }
 
         Instance = this;
+        _cancellationTokenSource = new CancellationTokenSource();
 
         if (UIGameObject != null)
         {
@@ -46,6 +50,11 @@ public class MainScriptHandler : ExitableMonobehaviour
 
         audioSource = GetComponent<AudioSource>();
         mainScripts = new Queue<MainScript>();
+    }
+
+    private void OnApplicationQuit()
+    {
+        _cancellationTokenSource?.Cancel();
     }
 
     /// <summary>
@@ -69,7 +78,7 @@ public class MainScriptHandler : ExitableMonobehaviour
             LoadingBarManager.Instance.SetLoadingBarPercent(0);
 
             #region Text
-            _scriptBeingGenerated = await scriptBuilder.GenerateNewScript();
+            _scriptBeingGenerated = await scriptBuilder.GenerateNewScript(_cancellationTokenSource.Token);
 
             if (_scriptBeingGenerated == null)
             {
@@ -86,18 +95,18 @@ public class MainScriptHandler : ExitableMonobehaviour
             }
 
             #region Audio
-            if (_scriptBeingGenerated.request != null)
-            {
-                // Get the voice from this request, if specified
-                if (_scriptBeingGenerated.request.VoiceID != null && !_scriptBeingGenerated.request.VoiceID.Equals(string.Empty))
-                {
-                    VoiceChangeManager.Instance.SetNextVoiceId(_scriptBeingGenerated.request.VoiceID, true);
-                }
-            }
+            //if (_scriptBeingGenerated.request != null)
+            //{
+            //    // Get the voice from this request, if specified
+            //    if (_scriptBeingGenerated.request.VoiceID != null && !_scriptBeingGenerated.request.VoiceID.Equals(string.Empty))
+            //    {
+            //        VoiceChangeManager.Instance.SetNextVoiceId(_scriptBeingGenerated.request.VoiceID, true);
+            //    }
+            //}
 
             // Need to switch to the next voice before generating the dialog
             // This could be the user request voice, or voice change by moderators
-            VoiceChangeManager.Instance.SwitchToNextVoice();
+            // VoiceChangeManager.Instance.SwitchToNextVoice();
 
             await _scriptBeingGenerated.GenerateNarrationPartsAsync();
 
@@ -121,11 +130,12 @@ public class MainScriptHandler : ExitableMonobehaviour
 
             ResetStopGeneratingImmediately();
 
-            Destroy(_scriptBeingGenerated);
+            DestroyImmediate(_scriptBeingGenerated);
 
             // What do we do here?
             // Somehow signal we need to generate another script
-            TryToGenerateNewScript();
+            if (!_cancellationTokenSource.Token.IsCancellationRequested)
+                TryToGenerateNewScript();
 
             return;
         }

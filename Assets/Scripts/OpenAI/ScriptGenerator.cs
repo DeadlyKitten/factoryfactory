@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System;
 using System.Text.RegularExpressions;
 using Ollama;
+using System.Threading;
 
 public class ScriptGenerator : MonoBehaviour
 {
@@ -12,6 +13,8 @@ public class ScriptGenerator : MonoBehaviour
 
     [SerializeField]
     private int _completionAttemptsMax = 3;
+
+    private CancellationTokenSource _cancellationTokenSource;
 
     private void Awake()
     {
@@ -21,19 +24,23 @@ public class ScriptGenerator : MonoBehaviour
         }
 
         Instance = this;
+
+        _cancellationTokenSource = new CancellationTokenSource();
     }
 
-    public async Task<string> CreateScriptCompletionAsync(ScriptSection scriptSection)
+    private void OnApplicationQuit() => _cancellationTokenSource?.Cancel();
+
+    public async Task<string> CreateScriptCompletionAsync(ScriptSection scriptSection, KeepAlive keepAlive)
     {
-        return await CreateScriptCompletionAsync(scriptSection.promptSO.text, scriptSection);
+        return await CreateScriptCompletionAsync(scriptSection.promptSO.text, scriptSection, keepAlive);
     }
 
-    public async Task<string> CreateScriptCompletionAsync(string customPrompt, ScriptSection scriptSection)
+    public async Task<string> CreateScriptCompletionAsync(string customPrompt, ScriptSection scriptSection, KeepAlive keepAlive)
     {
-        return await CreateCompletionAsync(customPrompt, scriptSection.promptSO);
+        return await CreateCompletionAsync(customPrompt, scriptSection.promptSO, keepAlive);
     }
 
-    public async Task<string> CreateCompletionAsync(string promptText, PromptSO p)
+    public async Task<string> CreateCompletionAsync(string promptText, PromptSO p, KeepAlive keepAlive)
     {
         int numCompletionAttempts = 0;
 
@@ -47,7 +54,7 @@ public class ScriptGenerator : MonoBehaviour
 
             try
             {
-                string text = await GetResultFromRequest(promptText, p);
+                string text = await OllamaClient.Generate("gemma2", promptText, _cancellationTokenSource.Token, keepAlive);
 
                 // Replace the bad words here 
                 if (numCompletionAttempts > 0)
@@ -57,9 +64,9 @@ public class ScriptGenerator : MonoBehaviour
 
                 if (await DoesTextPassModeration(text))
                 {
-                    Debug.Log("Result from OpenAI API:" + text);
+                    Debug.Log("Result from Ollama:" + text);
 
-                    return p.textToPrepend + text;
+                    return text;
                 }
                 else
                 {
@@ -68,7 +75,7 @@ public class ScriptGenerator : MonoBehaviour
             }
             catch (Exception e)
             {
-                Debug.LogWarning("Caught exception from OpenAI API in CreateCompletionAsync");
+                Debug.LogWarning("Caught exception from Ollama in CreateCompletionAsync");
 
                 if (e != null)
                 {
@@ -84,7 +91,7 @@ public class ScriptGenerator : MonoBehaviour
             }
         } while (numCompletionAttempts < _completionAttemptsMax);
 
-        throw new Exception($"Failed to get result from OpenAI API after {_completionAttemptsMax} attempts.");
+        throw new Exception($"Failed to get result from Ollama after {_completionAttemptsMax} attempts.");
     }
 
     private async Task<string> GetResultFromRequest(string promptText, PromptSO p)
@@ -121,7 +128,7 @@ public class ScriptGenerator : MonoBehaviour
         //        }
 
 
-        return await OllamaClient.Generate("llama3.2", promptText);
+        return await OllamaClient.Generate("gemma2", promptText, _cancellationTokenSource.Token);
     }
 
     public async Task<bool> DoesTextPassModeration(string text)

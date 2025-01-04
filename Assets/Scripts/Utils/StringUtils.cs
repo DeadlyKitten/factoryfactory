@@ -92,6 +92,7 @@ public class StringUtils
     /// <returns></returns>
     public static string RemoveStepIntros(string text)
     {
+        //text = Regex.Replace(text, @"(It all starts with )", "");
         text = Regex.Replace(text, @"([sS]tep \d+\.\s)", ""); // Step 1.
         text = Regex.Replace(text, @"(\d+\.\s)", "");         // 1. 
         text = Regex.Replace(text, @"(Narrator: )", "");

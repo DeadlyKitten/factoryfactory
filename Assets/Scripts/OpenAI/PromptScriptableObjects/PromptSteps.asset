@@ -20,7 +20,8 @@ MonoBehaviour:
     only need to write the script for the narrator to read off of, so don't include
     any stage direction, step numbers, or titles for the individual steps. Make sure
     the first step starts with the phrase "It all starts with..." but do not say
-    "dash". The product being made in this episode is "{product name}"
+    "dash". Each step should be in its own paragraph. The product being made in this
+    episode is "{product name}"
   textToPrepend: 'Step 1. It all starts with '
   modelName: gpt-3.5-turbo
   temperature: 1
