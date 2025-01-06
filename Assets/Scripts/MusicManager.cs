@@ -68,7 +68,7 @@ public class MusicManager : MonoBehaviour
 
     private async Task FadeVolumeIn()
     {
-        Debug.Log("Fading in...");
+        // Debug.Log("Fading in...");
         do
         {
             if (_audioSource.volume + fadeAmount > targetVolume)
@@ -85,7 +85,7 @@ public class MusicManager : MonoBehaviour
 
     private async Task FadeVolumeOut()
     {
-        Debug.Log("Fading out...");
+        // Debug.Log("Fading out...");
         do
         {
             if (_audioSource.volume - fadeAmount < 0)

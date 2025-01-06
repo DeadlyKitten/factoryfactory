@@ -33,8 +33,6 @@ public class MainScript : ExitableMonobehaviour
 
     public async Task GenerateNarrationPartsAsync()
     {
-        return;
-
         int loadingBarIncrementSection = 33 / scriptSections.Count;
         foreach (ScriptSection scriptSection in scriptSections)
         {
@@ -42,6 +40,8 @@ public class MainScript : ExitableMonobehaviour
 
             List<string> lines = StringUtils.SplitToLines(scriptSection.text).ToList();
             int loadingBarIncrement = loadingBarIncrementSection / lines.Count;
+
+            var lineInSection = 1;
 
             foreach (string line in lines)
             {
@@ -65,7 +65,7 @@ public class MainScript : ExitableMonobehaviour
                     _testUberduckExceptions = false;
                 }
 
-                Debug.Log($"Generating narration for:{tempLine}");
+                Debug.Log($"({scriptSection.promptSO.name} : {lineInSection++} / {lines.Count}) - Generating narration for:{tempLine}");
 
                 NarrationPart narrationPart = new NarrationPart(tempLine);
 

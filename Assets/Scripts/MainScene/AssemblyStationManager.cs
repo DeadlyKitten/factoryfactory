@@ -2,7 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
+using Ollama;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -32,6 +34,8 @@ public class AssemblyStationManager : ExitableMonobehaviour
 
     private float _conveyerbeltSpeed;
 
+    private CancellationTokenSource _cancellationTokenSource;
+
     private void Awake()
     {
         if (Instance != null)
@@ -40,6 +44,8 @@ public class AssemblyStationManager : ExitableMonobehaviour
         }
 
         Instance = this;
+
+        _cancellationTokenSource = new CancellationTokenSource();
 
         _assemblyStationsQueue = new Queue<AssemblyStation>();
 
@@ -58,6 +64,8 @@ public class AssemblyStationManager : ExitableMonobehaviour
 
         GenerateTagMap();
     }
+
+    private void OnApplicationQuit() => _cancellationTokenSource?.Cancel();
 
     private void GenerateTagMap()
     {
@@ -82,8 +90,8 @@ public class AssemblyStationManager : ExitableMonobehaviour
                 }
             }
         }
-        Debug.Log("Generated tag map with tags:");
-        Debug.Log(GetTagMapTagsString());
+        // Debug.Log("Generated tag map with tags:");
+        // Debug.Log(GetTagMapTagsString());
     }
 
     public static string GetTagMapTagsString()
@@ -284,7 +292,7 @@ public class AssemblyStationManager : ExitableMonobehaviour
             NarrationPart part = scriptSection.narrationParts[i];
 
             // Get tag from OpenAI
-            string result = await GetTagFromOpenAI(part);
+            string result = await GetTagFromOllama(part);
 
             //string result = GetTagFromDumbRegexCheck(part);
 
@@ -335,7 +343,7 @@ public class AssemblyStationManager : ExitableMonobehaviour
         return "";
     }
 
-    private async Task<string> GetTagFromOpenAI(NarrationPart part)
+    private async Task<string> GetTagFromOllama(NarrationPart part)
     {
         // Add the tags to the prompt
         string promptText = StringUtils.ReplaceTextInString("tags", GetTagMapTagsString(), _assemblyClassificationPrompt.text);
@@ -347,7 +355,7 @@ public class AssemblyStationManager : ExitableMonobehaviour
 
         try
         {
-            result = await ScriptGenerator.Instance.CreateCompletionAsync(promptText, _assemblyClassificationPrompt);
+            result = await OllamaClient.Generate("llama3.2", promptText, _cancellationTokenSource.Token, Ollama.KeepAlive.ThirtySeconds);
         }
         catch
         {

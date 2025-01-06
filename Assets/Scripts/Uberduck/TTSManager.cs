@@ -1,13 +1,17 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Security.AccessControl;
+using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
+<<<<<<< Updated upstream:Assets/Scripts/Uberduck/UberduckManager.cs
 using System.Collections;
 using Newtonsoft.Json;
 using System.Text.RegularExpressions;
+=======
+using Xtts;
+>>>>>>> Stashed changes:Assets/Scripts/Uberduck/TTSManager.cs
 
 public class TTSManager : MonoBehaviour
 {
@@ -16,6 +20,8 @@ public class TTSManager : MonoBehaviour
 
     [SerializeField]
     private int _maxClipGenerationTries = 2;
+
+    CancellationTokenSource _cancellationTokenSource;
 
     void Awake()
     {
@@ -27,9 +33,13 @@ public class TTSManager : MonoBehaviour
         Instance = this;
     }
 
+    private void Start() => XttsClient.SetBaseURL("http://steven-factory.local:8020");
+
+    private void OnApplicationQuit() => _cancellationTokenSource?.Cancel();
+
     public async Task<AudioClip> GenerateAudioClip(string text)
     {
-        if (text == null)
+        if (text == null || !Application.isPlaying)
         {
             return null;
         }
@@ -151,10 +161,11 @@ public class TTSManager : MonoBehaviour
     private string FixMispronouncedWords(string text)
     {
         // Should translate all acronyms instead of doing this manually
-        text = Regex.Replace(text, "(3[Dd])", "three dee"); // "3D" is pronounced "trid" by uberduck
-        text = Regex.Replace(text, "([rR][gG][bB])", "are gee bee"); // uberduck says "grab"
-        text = Regex.Replace(text, "([vV][rR])", "vee are");
-        text = Regex.Replace(text, "([aA][iI])", "ayy eye");
+        text = Regex.Replace(text, @"(\b[3][Dd]\b)", "three dee"); // "3D" is pronounced "trid" by uberduck
+        text = Regex.Replace(text, @"(\b[rR][gG][bB]\b)", "are gee bee"); // uberduck says "grab"
+        text = Regex.Replace(text, @"(\b[vV][rR]\b)", "vee are");
+        text = Regex.Replace(text, @"(\b[aA][iI]\b)", "ayy eye");
+        text = Regex.Replace(text, @"(\b[bB][bB][qQ]\b)", "barbecue");
 
         return text;
     }

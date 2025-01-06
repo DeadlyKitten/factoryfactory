@@ -1,22 +1,32 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace Ollama
 {
     public class OllamaRequest
     {
-        public string model;
-        public string prompt;
-        public string format;
-        public bool stream;
-        public int keep_alive;
+        [JsonProperty("model")]
+        public string Model;
 
-        public OllamaRequest(string model, string prompt, string format, bool stream, KeepAlive keep_alive)
+        [JsonProperty("prompt")]
+        public string Prompt;
+
+        [JsonProperty("format")]
+        public string Format;
+
+        [JsonProperty("stream")]
+        public bool Stream;
+
+        [JsonProperty("keep_alive")]
+        public int KeepAlive;
+
+        public OllamaRequest(string model, string prompt, string format, bool stream, KeepAlive keepAlive)
         {
-            this.model = model;
-            this.prompt = prompt;
-            this.format = format;
-            this.stream = stream;
-            this.keep_alive = (int)keep_alive;
+            this.Model = model;
+            this.Prompt = prompt;
+            this.Format = format;
+            this.Stream = stream;
+            this.KeepAlive = (int)keepAlive;
         }
     }
 }

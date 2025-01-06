@@ -1,15 +1,19 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using UnityEngine;
+using UnityEngine.Networking;
+using Cysharp.Threading.Tasks;
+using System.Threading;
 
 namespace Ollama
 {
     public class OllamaClient
     {
-        private const string SERVER = "http://localhost:11434/";
+        private const string SERVER = "http://steven-factory.local:11434/";
 
         /// <summary>
         /// Generate a simple response from prompt <i>(no context/history)</i>
@@ -18,18 +22,17 @@ namespace Ollama
         /// <param name="images">A multimodal model is required to handle images (<b>eg.</b> llava)</param>
         /// <param name="keep_alive">The behavior to keep the model loaded in memory</param>
         /// <returns>response string from the LLM</returns>
-        public static async Task<string> Generate(string model, string prompt, KeepAlive keep_alive = KeepAlive.UnloadImmediately)
+        public static async UniTask<string> Generate(string model, string prompt, CancellationToken cancellationToken, KeepAlive keep_alive = KeepAlive.UnloadImmediately)
         {
-            Debug.Log("Sending request to Ollama server...");
-            Debug.Log("Prompt: " + prompt);
+            Debug.Log("Sending request to Ollama server...\nPrompt: " + prompt);
 
             var request = new OllamaRequest(model, prompt, null, false, keep_alive);
             string requestPayload = JsonConvert.SerializeObject(request);
-            var result = await PostRequest<OllamaResponse>(requestPayload, Endpoints.GENERATE);
-            return result.response;
+            var result = await UnityPostRequest<OllamaResponse>(requestPayload, Endpoints.GENERATE, cancellationToken);
+            return result.Response;
         }
 
-        private static async Task<T> PostRequest<T>(string requestPayload, string endpoint)
+        private static async UniTask<T> PostRequest<T>(string requestPayload, string endpoint)
         {
             HttpWebRequest httpWebRequest;
 
@@ -53,6 +56,25 @@ namespace Ollama
 
             string result = await streamReader.ReadToEndAsync();
             return JsonConvert.DeserializeObject<T>(result);
+        }
+
+        private static async UniTask<T> UnityPostRequest<T>(string requestPayload, string endpoint, CancellationToken cancellationToken)
+        {
+            using var downloadHandler = new DownloadHandlerBuffer();
+            using var uploadHandler = new UploadHandlerRaw(Encoding.ASCII.GetBytes(requestPayload));
+            using var unityWebRequest = new UnityWebRequest($"{SERVER}{endpoint}", "POST", downloadHandler, uploadHandler);
+
+            uploadHandler.contentType = "application/json";
+                
+            await unityWebRequest.SendWebRequest().WithCancellation(cancellationToken);
+
+            if (unityWebRequest.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(unityWebRequest.error);
+                return default;
+            }
+
+            return JsonConvert.DeserializeObject<T>(downloadHandler.text);
         }
     }
 }

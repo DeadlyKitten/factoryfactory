@@ -28,6 +28,8 @@ public class StateMachine : MonoBehaviour
             Destroy(this);
         }
 
+        Application.targetFrameRate = 60;
+
         Instance = this;
 
         _startupState = new StartupState();
@@ -72,7 +74,7 @@ public class StateMachine : MonoBehaviour
     {
         if (currentState != null)
         {
-            Debug.Log($"Changing state from:{currentState.GetType().Name} to {newStateID.GetType().Name}");
+            Debug.Log($"Changing state from:{currentState.GetType().Name} to {GetStateFromID(newStateID).GetType().Name}");
             await currentState.ExitState(this);
         } else
         {
