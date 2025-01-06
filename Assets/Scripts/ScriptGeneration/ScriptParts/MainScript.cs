@@ -69,7 +69,7 @@ public class MainScript : ExitableMonobehaviour
 
                 NarrationPart narrationPart = new NarrationPart(tempLine);
 
-                AudioClip clip = await UberduckManager.Instance.GenerateAudioClip(tempLine);
+                AudioClip clip = await TTSManager.Instance.GenerateAudioClip(tempLine);
 
                 if (clip != null)
                 {
